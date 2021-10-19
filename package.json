@@ -1,0 +1,10 @@
+{
+  "name": "donation-chain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "viniciusmeneses <vinicius.meneses04@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.5.1"
+  }
+}
