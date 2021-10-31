@@ -18,72 +18,102 @@ interface IBEP20 {
 }
 
 contract DonationChain {
-  enum Category {
+  enum Cause {
     ANIMALS,
+    EDUCATION,
     HEALTHCARE,
-    ENVIRONMENT,
-    SOCIAL_ASSISTANCE
+    ENVIRONMENT
   }
 
   struct Charity {
     string name;
     string description;
-    Category category;
+    Cause cause;
     string website;
   }
 
-  mapping(address => Charity) public charities;
-  address[] addresses;
+  address public owner;
 
-  modifier charityExists(address addr) {
+  mapping(address => Charity) public charities;
+  address[] private recipients;
+
+  constructor() {
+    owner = msg.sender;
+  }
+
+  modifier existCharity(address addr) {
     require(bytes(charities[addr].name).length > 0, "Charity not exists");
     _;
   }
 
-  modifier charityNotExists(address addr) {
+  modifier notExistCharity(address addr) {
     require(bytes(charities[msg.sender].name).length == 0, "Charity already exists");
     _;
   }
-  
-  function createCharity(string memory name, string memory description, Category category, string memory website) public charityNotExists(msg.sender) {
-    charities[msg.sender] = Charity({
+
+  modifier isCharityValid(address recipient, string memory name, string memory description) {
+    require(recipient == address(recipient), "Charity address is invalid");
+    require(bytes(name).length > 0, "Charity name is blank");
+    require(bytes(description).length > 0, "Charity description is blank");
+    _;
+  }
+
+  modifier isOwner() {
+    require(msg.sender == owner, "Sender isn't contract owner");
+    _;
+  }
+
+  function createCharity(
+    address recipient,
+    string memory name,
+    string memory description,
+    Cause cause,
+    string memory website
+  ) public isOwner() notExistCharity(recipient) isCharityValid(recipient, name, description) {
+    charities[recipient] = Charity({
       name: name,
       description: description,
-      category: category,
+      cause: cause,
       website: website
     });
 
-    addresses.push(msg.sender);
+    recipients.push(recipient);
   }
 
-  function updateCharity(string memory name, string memory description, Category category, string memory website) public charityExists(msg.sender) {
-    charities[msg.sender].name = name;
-    charities[msg.sender].description = description;
-    charities[msg.sender].category = category;
-    charities[msg.sender].website = website;
+  function updateCharity(
+    address recipient,
+    string memory name,
+    string memory description,
+    Cause cause,
+    string memory website
+  ) public isOwner() existCharity(recipient) isCharityValid(recipient, name, description) {
+    charities[recipient].name = name;
+    charities[recipient].description = description;
+    charities[recipient].cause = cause;
+    charities[recipient].website = website;
   }
-  
-  function deleteCharity() public charityExists(msg.sender) {
-    delete charities[msg.sender];
+
+  function deleteCharity(address recipient) public isOwner() existCharity(recipient) {
+    delete charities[recipient];
     bool deleted = false;
 
-    for (uint i = 0; i < addresses.length; i++) {
-      if (addresses[i] == msg.sender) deleted = true;
-      addresses[i] = addresses[i + (deleted ? 1 : 0)];
+    for (uint i = 0; i < recipients.length; i++) {
+      if (recipients[i] == recipient) deleted = true;
+      recipients[i] = recipients[i + (deleted ? 1 : 0)];
     }
 
-    addresses.pop();
+    recipients.pop();
   }
 
-  function getAddresses() public view returns(address[] memory) {
-    return addresses;
+  function getRecipients() public view returns(address[] memory) {
+    return recipients;
   }
 
-  function donate(address payable recipient) public payable charityExists(recipient) {
+  function donate(address payable recipient) public payable existCharity(recipient) {
     recipient.transfer(msg.value);
   }
 
-  function donateToken(address recipient, address token, uint256 amount) public charityExists(recipient) {
+  function donateToken(address recipient, address token, uint256 amount) public existCharity(recipient) {
     IBEP20 tokenContract = IBEP20(token);
 
     require(amount > 0, "You need to donate at least some amount");
