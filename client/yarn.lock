@@ -1742,34 +1742,34 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@mantine/core@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@mantine/core/-/core-3.1.0.tgz#08d8cd85b7db37ade9f243bfebc61a2eadccdf9a"
-  integrity sha512-4AhASVElaBQzyoGvzZGSpktlvEH/6DluK86E+mKy2dnROzu7wG3CNkKXZU5h1WKrkRj3fGb+8gNTBVJNzrO67Q==
+"@mantine/core@^3.1.7":
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/@mantine/core/-/core-3.1.7.tgz#c36eedd110137e29ddf4e3b1c6ed5dab759cb80d"
+  integrity sha512-/rJwP3jsZ5dg7b/OjmEDBC6WBtKW3IzgAjuLFcbDYqG3f34N1ykHAb5+nvGxBAADLDIkVp+Ygbc1xtm924HxgQ==
   dependencies:
-    "@mantine/styles" "3.1.0"
+    "@mantine/styles" "3.1.7"
     "@popperjs/core" "^2.9.3"
     clsx "^1.1.1"
     react-popper "^2.2.5"
     react-textarea-autosize "^8.3.2"
 
-"@mantine/hooks@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-3.1.0.tgz#4a3d541ab030716d566e88f88596c1fa44210cf8"
-  integrity sha512-GkNDZH+FjTaCHRfx3shsvSOONpKhmTGP5PwijTDiePrtfPxxFOWP8LQlZrKsUq3gPB89UTf+uUykxh7cogckOg==
+"@mantine/hooks@^3.1.7":
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-3.1.7.tgz#4b1e4ace6e9e4708e6f9094f48796bc55c46c28d"
+  integrity sha512-tielfFyQvTSm9J/Bjbw6HZkYH76+StpzJS7+VBLNZ5VYAOm18gcfbTAxCREy6TytBKw0IVSFW+zvz7KkY4VosQ==
 
-"@mantine/notifications@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@mantine/notifications/-/notifications-3.1.0.tgz#d6a314b9c9bd69804c43d15265df42c6e29bfb60"
-  integrity sha512-d/2MpIlLNigNVP7OqZTucjQ29vzLDunY5Xz3XKC5xRQY+N60amwcMHTd7qt2VStQK2NUg9TnDalegEBwXUwBGA==
+"@mantine/notifications@^3.1.7":
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/@mantine/notifications/-/notifications-3.1.7.tgz#a66b942032cf9f94350daad1b0e4e31d11a38a11"
+  integrity sha512-kDvaDtzjVim2jtUHiU21XZgCbUaCRstcsqbFPKzFnURMILKgBUDT4fTSn9xllGLfcIWOJ4z26kU8G4QBFfIbRg==
   dependencies:
     clsx "^1.1.1"
     react-transition-group "^4.4.2"
 
-"@mantine/styles@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@mantine/styles/-/styles-3.1.0.tgz#cd067de4e062780ee4fd75f31fb74af4d47292d8"
-  integrity sha512-2YpDjJMys8+tRrBcHUs4ZVOuIFgDyUTtO6Ix4nT3+9QT0GU2OVpWzy1ssA1/fy4wEK/H+Iy6mvMIZ85MB5kCXw==
+"@mantine/styles@3.1.7":
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/@mantine/styles/-/styles-3.1.7.tgz#417f8b8aa98e966298505c1909d7ca009a77d614"
+  integrity sha512-JAOD2Ji/o9tVi6B17tVe63oNzbcVUKVbdFJKhabCHIwMjGrflnm7CR0YHH9vmsRuOJRDRvlG+ug88qTQ+q0dEQ==
   dependencies:
     "@emotion/cache" "^11.4.0"
     "@emotion/react" "^11.4.1"

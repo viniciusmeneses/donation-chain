@@ -1,6 +1,6 @@
 import { Col, Grid, SimpleGrid } from '@mantine/core';
 
-import { CharityCard, Sidebar } from '../../components';
+import { Charity, Sidebar } from '../../components';
 
 export const HomePage = () => (
 	<Grid gutter="xl">
@@ -10,7 +10,7 @@ export const HomePage = () => (
 
 		<Col span={9}>
 			<SimpleGrid cols={3}>
-				<CharityCard />
+				<Charity />
 			</SimpleGrid>
 		</Col>
 	</Grid>

@@ -18,7 +18,7 @@ const useStyles = createStyles(theme => ({
 	},
 	container: {
 		padding: 0,
-		paddingTop: '90px',
+		paddingTop: '80px',
 	},
 }));
 
@@ -30,6 +30,7 @@ const App = () => {
 			theme={{
 				fontFamily,
 				headings: { fontFamily },
+				primaryColor: 'yellow',
 			}}
 		>
 			<AppShell className={classes.app} header={<Header />}>
