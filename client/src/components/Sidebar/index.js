@@ -1,56 +1,69 @@
 import {
-	Avatar,
-	UnstyledButton,
-	Card,
-	Divider,
-	Group,
-	Text,
-	SimpleGrid,
+  Avatar,
+  UnstyledButton,
+  Card,
+  Divider,
+  Group,
+  Text,
+  SimpleGrid,
+  createStyles,
 } from '@mantine/core';
 
 import { HomeIcon } from '@modulz/radix-icons';
 
-const Cause = () => (
-	<UnstyledButton
-		sx={theme => ({
-			borderRadius: '4px',
-			'&:hover': { backgroundColor: theme.colors.blue[0] },
-			'&:active': { transform: 'translateY(1px)' },
-		})}
-	>
-		<Group spacing="xs">
-			<Avatar size={28} color="blue">
-				<HomeIcon />
-			</Avatar>
+const useStyles = createStyles(theme => ({
+  title: {
+    color: theme.colors.gray[6],
+  },
+  cause: {
+    borderRadius: '4px',
+    '&:hover': { backgroundColor: theme.colors.blue[0] },
+    '&:active': { transform: 'translateY(1px)' },
+  },
+  causeName: {
+    color: theme.colors.blue[9],
+  },
+}));
 
-			<Text
-				weight={600}
-				size="sm"
-				sx={theme => ({ color: theme.colors.blue[9] })}
-			>
-				Animals
-			</Text>
-		</Group>
-	</UnstyledButton>
-);
+const Cause = () => {
+  const { classes } = useStyles();
 
-export const Sidebar = () => (
-	<Card shadow="sm">
-		<Text
-			weight={500}
-			mt={0}
-			mb="4px"
-			size="sm"
-			component="h3"
-			sx={t => ({ color: t.colors.gray[6] })}
-		>
-			Causes
-		</Text>
+  return (
+    <UnstyledButton className={classes.cause}>
+      <Group spacing="xs">
+        <Avatar size={28} color="blue">
+          <HomeIcon />
+        </Avatar>
 
-		<Divider />
+        <Text weight={600} size="sm" className={classes.causeName}>
+          Animals
+        </Text>
+      </Group>
+    </UnstyledButton>
+  );
+};
 
-		<SimpleGrid spacing="5px" cols={1} mt="xs">
-			<Cause />
-		</SimpleGrid>
-	</Card>
-);
+export const Sidebar = () => {
+  const { classes } = useStyles();
+
+  return (
+    <Card shadow="sm">
+      <Text
+        weight={500}
+        mt={0}
+        mb="4px"
+        size="sm"
+        component="h3"
+        className={classes.title}
+      >
+        Causes
+      </Text>
+
+      <Divider />
+
+      <SimpleGrid spacing="5px" cols={1} mt="xs">
+        <Cause />
+      </SimpleGrid>
+    </Card>
+  );
+};

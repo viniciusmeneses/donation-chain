@@ -11,6 +11,12 @@ import { HomePage } from './pages';
 
 const fontFamily = 'Rubik, sans-serif';
 
+const theme = {
+	fontFamily,
+	headings: { fontFamily },
+	primaryColor: 'yellow',
+};
+
 const useStyles = createStyles(theme => ({
 	app: {
 		backgroundColor: theme.colors.gray[0],
@@ -26,13 +32,7 @@ const App = () => {
 	const { classes } = useStyles();
 
 	return (
-		<MantineProvider
-			theme={{
-				fontFamily,
-				headings: { fontFamily },
-				primaryColor: 'yellow',
-			}}
-		>
+		<MantineProvider theme={theme}>
 			<AppShell className={classes.app} header={<Header />}>
 				<Container size="xl" className={classes.container}>
 					<HomePage />
