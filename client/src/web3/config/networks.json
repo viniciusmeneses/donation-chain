@@ -1,0 +1,32 @@
+{
+  "testnet": {
+    "chainId": "0x61",
+    "chainName": "BSC Testnet",
+    "rpcUrls": [
+      "https://data-seed-prebsc-1-s1.binance.org:8545/"
+    ],
+    "nativeCurrency": {
+      "name": "Binance Coin",
+      "symbol": "BNB",
+      "decimals": 18
+    },
+    "blockExplorerUrls": [
+      "https://testnet.bscscan.com"
+    ]
+  },
+  "mainnet": {
+    "chainId": "0x38",
+    "chainName": "BSC Mainnet",
+    "rpcUrls": [
+      "https://bsc-dataseed.binance.org/"
+    ],
+    "nativeCurrency": {
+      "name": "Binance Coin",
+      "symbol": "BNB",
+      "decimals": 18
+    },
+    "blockExplorerUrls": [
+      "https://testnet.bscscan.com"
+    ]
+  }
+}

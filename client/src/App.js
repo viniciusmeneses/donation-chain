@@ -9,6 +9,8 @@ import { Header } from './components';
 
 import { HomePage } from './pages';
 
+import { Web3Provider } from './web3';
+
 const fontFamily = 'Rubik, sans-serif';
 
 const theme = {
@@ -33,11 +35,13 @@ const App = () => {
 
 	return (
 		<MantineProvider theme={theme}>
-			<AppShell className={classes.app} header={<Header />}>
-				<Container size="xl" className={classes.container}>
-					<HomePage />
-				</Container>
-			</AppShell>
+			<Web3Provider>
+				<AppShell className={classes.app} header={<Header />}>
+					<Container size="xl" className={classes.container}>
+						<HomePage />
+					</Container>
+				</AppShell>
+			</Web3Provider>
 		</MantineProvider>
 	);
 };

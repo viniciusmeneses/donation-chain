@@ -67,7 +67,7 @@ contract DonationChain {
     _;
   }
 
-  constructor() {
+  constructor() public {
     owner = msg.sender;
   }
 

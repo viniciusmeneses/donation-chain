@@ -5,6 +5,6 @@
   "author": "viniciusmeneses <vinicius.meneses04@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@truffle/hdwallet-provider": "^1.5.1"
+    "@truffle/hdwallet-provider": "^2.0.0"
   }
 }
