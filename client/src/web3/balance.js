@@ -13,22 +13,24 @@ export const useBalance = token => {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(async () => {
-		setLoading(true);
-
-		if (token) {
-			const tokenContract = new web3.eth.Contract(
-				BEP20.abi,
-				tokens[process.env.REACT_APP_NETWORK][token]
-			);
-			const balance = await tokenContract.methods.balanceOf(account).call();
-			setBalance(web3.utils.fromWei(balance));
+		if (account) {
+			setLoading(true);
+			if (token) {
+				const tokenContract = new web3.eth.Contract(
+					BEP20.abi,
+					tokens[process.env.REACT_APP_NETWORK][token]
+				);
+				const balance = await tokenContract.methods.balanceOf(account).call();
+				setBalance(web3.utils.fromWei(balance));
+			} else {
+				const balance = await web3.eth.getBalance(account);
+				setBalance(web3.utils.fromWei(balance));
+			}
+			setLoading(false);
 		} else {
-			const balance = await web3.eth.getBalance(account);
-			setBalance(web3.utils.fromWei(balance));
+			setBalance(0);
 		}
-
-		setLoading(false);
-	}, []);
+	}, [account]);
 
 	return { balance, loading };
 };

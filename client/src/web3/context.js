@@ -1,37 +1,44 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useCallback, useEffect } from 'react';
 
 import Web3 from 'web3';
 
 import { identity } from 'ramda';
 
+import { useLocalStorageValue } from '@mantine/hooks';
+
 import { network, addOrChangeNetwork } from './utils';
 
-export const Web3Context = createContext(new Web3());
+const web3 = new Web3(network.rpcUrls[0]);
+
+export const Web3Context = createContext({});
 
 export const Web3Provider = props => {
-	const web3 = useContext(Web3Context);
-	const [account, setAccount] = useState();
+	const [account, setAccountStorage] = useLocalStorageValue({
+		key: '@DonationChain/account',
+	});
+
+	const setAccount = useCallback(
+		account => setAccountStorage(account || ''),
+		[setAccountStorage]
+	);
 
 	useEffect(async () => {
 		const { ethereum } = window;
 
 		if (ethereum) {
-			web3.setProvider(ethereum);
 			ethereum.on('accountsChanged', ([account]) => setAccount(account));
 			ethereum.on('chainChanged', chainId =>
 				setAccount(chainId === network.chainId ? identity : null)
 			);
-		} else if (window.web3) {
-			web3.setProvider(window.web3.currentProvider);
-		} else {
-			web3.setProvider(
-				new Web3.providers.HttpProvider('http://127.0.0.1:8545')
-			);
-		}
 
-		const [addr] = await web3.eth.getAccounts();
-		if (ethereum && addr) await addOrChangeNetwork();
-		setAccount(addr);
+			if (account) {
+				const [addr] = await ethereum.request({ method: 'eth_accounts' });
+				if (addr) await addOrChangeNetwork();
+				setAccount(addr);
+			}
+		} else {
+			setAccount(null);
+		}
 	}, []);
 
 	return (

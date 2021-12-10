@@ -35,6 +35,7 @@ contract DonationChain {
     Cause cause;
     string website;
     address[] acceptedTokens;
+    uint donationCount;
   }
 
   address public owner;
@@ -84,7 +85,8 @@ contract DonationChain {
       description: description,
       cause: cause,
       website: website,
-      acceptedTokens: acceptedTokens
+      acceptedTokens: acceptedTokens,
+      donationCount: 0
     });
 
     recipients.push(recipient);
@@ -123,7 +125,8 @@ contract DonationChain {
 
   function donate(address payable recipient) public payable existCharity(recipient) {
     recipient.transfer(msg.value);
-    emit Donation(msg.sender, recipient, msg.value, 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c);
+    charities[recipient].donationCount += 1;
+    emit Donation(msg.sender, recipient, msg.value, address(0));
   }
 
   function donateToken(address recipient, address token, uint256 amount) public existCharity(recipient) {
@@ -144,6 +147,7 @@ contract DonationChain {
     require(allowance >= amount, "Check the token allowance");
 
     tokenContract.transferFrom(msg.sender, recipient, amount);
+    charities[recipient].donationCount += 1;
     emit Donation(msg.sender, recipient, amount, token);
   }
 }

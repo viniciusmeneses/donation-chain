@@ -15,12 +15,14 @@ import {
 	createStyles,
 } from '@mantine/core';
 
+import { useForm } from '@mantine/hooks';
+
 import { CharityCard } from '../CharityCard';
 
-import { useWallet } from '../../web3';
+import { useBalance, useDonation, useWallet } from '../../web3';
 
-import bnbLogo from '../../assets/images/coin.png';
-import busdLogo from '../../assets/images/0xe9e7cea3dedca5984780bafc599bd69add087d56.png';
+import bnbLogo from '../../assets/images/bnb.png';
+import busdLogo from '../../assets/images/busd.png';
 
 const useStyles = createStyles(theme => ({
 	fullHeight: {
@@ -39,60 +41,102 @@ const useStyles = createStyles(theme => ({
 	},
 }));
 
-export const Donation = () => {
+export const Donation = charity => {
 	const { classes } = useStyles();
 
 	const wallet = useWallet();
+	const bnbCoin = useBalance();
+	const busdToken = useBalance('BUSD');
+
+	const { donate, donating } = useDonation(charity);
+
+	const form = useForm({
+		initialValues: {
+			currency: 'BUSD',
+			amount: '',
+		},
+		validationRules: {
+			amount: (value, { currency }) => {
+				const parsed = parseFloat(value);
+				const max = parseFloat(
+					currency === 'BUSD' ? busdToken.balance : bnbCoin.balance
+				);
+				return parsed && parsed > 0 && parsed <= max;
+			},
+		},
+		errorMessages: {
+			amount: 'Invalid amount',
+		},
+	});
 
 	return (
 		<Grid gutter="xl">
 			<Col span={6}>
-				<CharityCard withButtons={false} className={classes.fullHeight} />
+				<CharityCard
+					withButtons={false}
+					className={classes.fullHeight}
+					{...charity}
+				/>
 			</Col>
 			<Col span={6}>
 				<Card shadow="md" padding="lg" className={classes.fullHeight}>
-					<InputWrapper size="md" label="Select the cryptocurrency">
-						<SegmentedControl
-							fullWidth
+					<form onSubmit={form.onSubmit(values => donate(1, '0x0'))}>
+						<InputWrapper size="md" label="Select the cryptocurrency">
+							<SegmentedControl
+								fullWidth
+								size="md"
+								sx={theme => ({ marginBottom: theme.spacing.lg })}
+								data={[
+									{
+										value: 'BUSD',
+										label: (
+											<Center>
+												<Image src={busdLogo} width="24px" height="auto" />
+												<Box ml={10} component="span">
+													BUSD
+												</Box>
+											</Center>
+										),
+									},
+									{
+										value: 'BNB',
+										label: (
+											<Center>
+												<Image src={bnbLogo} width="24px" height="auto" />
+												<Box ml={10} component="span">
+													BNB
+												</Box>
+											</Center>
+										),
+									},
+								]}
+								{...form.getInputProps('currency')}
+							/>
+						</InputWrapper>
+
+						<TextInput
 							size="md"
+							placeholder="0.0"
+							label="Amount"
+							description={`Balance: ${
+								form.values.currency === 'BUSD'
+									? busdToken.balance
+									: bnbCoin.balance
+							}`}
 							sx={theme => ({ marginBottom: theme.spacing.lg })}
-							data={[
-								{
-									value: 'busd',
-									label: (
-										<Center>
-											<Image src={busdLogo} width="24px" height="auto" />
-											<Box ml={10} component="span">
-												BUSD
-											</Box>
-										</Center>
-									),
-								},
-								{
-									value: 'bnb',
-									label: (
-										<Center>
-											<Image src={bnbLogo} width="24px" height="auto" />
-											<Box ml={10} component="span">
-												BNB
-											</Box>
-										</Center>
-									),
-								},
-							]}
+							{...form.getInputProps('amount')}
 						/>
-					</InputWrapper>
 
-					<TextInput
-						size="md"
-						placeholder="Enter the amount to be donated"
-						label="Amount"
-						sx={theme => ({ marginBottom: theme.spacing.lg })}
-					/>
-
-					<Button size="md" fullWidth>
-						{wallet.address ? 'Donate' : 'Connect Wallet'}
-					</Button>
+						<Button
+							fullWidth
+							type={wallet.address ? 'submit' : 'button'}
+							size="md"
+							onClick={wallet.address ? undefined : wallet.connect}
+							loading={wallet.connecting}
+						>
+							{wallet.address ? 'Donate' : 'Connect Wallet'}
+						</Button>
+					</form>
 				</Card>
 			</Col>
 			<Col span={12}>

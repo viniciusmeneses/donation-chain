@@ -64,7 +64,7 @@ export const Header = () => {
 						onClick={wallet.connect}
 						loading={wallet.connecting}
 					>
-						Connect wallet
+						Connect Wallet
 					</Button>
 				)}
 

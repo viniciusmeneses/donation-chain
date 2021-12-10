@@ -5,6 +5,8 @@ import {
 	createStyles,
 } from '@mantine/core';
 
+import { NotificationsProvider } from '@mantine/notifications';
+
 import { Header } from './components';
 
 import { HomePage } from './pages';
@@ -35,13 +37,15 @@ const App = () => {
 
 	return (
 		<MantineProvider theme={theme}>
-			<Web3Provider>
-				<AppShell className={classes.app} header={<Header />}>
-					<Container size="xl" className={classes.container}>
-						<HomePage />
-					</Container>
-				</AppShell>
-			</Web3Provider>
+			<NotificationsProvider>
+				<Web3Provider>
+					<AppShell className={classes.app} header={<Header />}>
+						<Container size="xl" className={classes.container}>
+							<HomePage />
+						</Container>
+					</AppShell>
+				</Web3Provider>
+			</NotificationsProvider>
 		</MantineProvider>
 	);
 };
