@@ -6,37 +6,13 @@ export const shortenAddress = address => {
 export const removeHttpFromUrl = url =>
 	url.replace(/^(https?:\/\/)?(www\.)?/, '');
 
-export const causes = {
-	0: {
-		label: 'Animals',
-		color: 'orange',
-	},
-	1: {
-		label: 'Culture',
-		color: 'blue',
-	},
-	2: {
-		label: 'Education',
-		color: 'violet',
-	},
-	3: {
-		label: 'Environment',
-		color: 'green',
-	},
-	4: {
-		label: 'Healthcare',
-		color: 'red',
-	},
-	5: {
-		label: 'Justice',
-		color: 'gray',
-	},
-	6: {
-		label: 'Religion',
-		color: 'yellow',
-	},
-	7: {
-		label: 'Research',
-		color: 'cian',
-	},
-};
+export const causes = [
+	{ label: 'Animals', color: 'orange' },
+	{ label: 'Culture', color: 'blue' },
+	{ label: 'Education', color: 'violet' },
+	{ label: 'Environment', color: 'green' },
+	{ label: 'Healthcare', color: 'red' },
+	{ label: 'Justice', color: 'lime' },
+	{ label: 'Religion', color: 'yellow' },
+	{ label: 'Research', color: 'cyan' },
+];

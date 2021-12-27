@@ -19,6 +19,10 @@ import { CauseIcon } from '../CauseIcon';
 import { causes, removeHttpFromUrl } from '../../utils';
 
 const useStyles = createStyles(theme => ({
+	container: {
+		display: 'flex',
+		flexDirection: 'column',
+	},
 	header: {
 		marginBottom: 5,
 		marginTop: theme.spacing.sm,
@@ -29,6 +33,7 @@ const useStyles = createStyles(theme => ({
 	footer: {
 		display: 'flex',
 		alignItems: 'center',
+		marginTop: 'auto',
 	},
 }));
 
@@ -45,7 +50,7 @@ export const CharityCard = ({
 	const { classes } = useStyles();
 
 	return (
-		<Card shadow="sm" padding="lg" {...props}>
+		<Card shadow="sm" padding="lg" className={classes.container} {...props}>
 			<Card.Section>
 				<Image
 					src={`https://source.unsplash.com/featured/300x150/?${causes[cause].label}`}
@@ -72,12 +77,12 @@ export const CharityCard = ({
 				</Avatar>
 			</Group>
 
-			<Text component="p" size="sm" m={0} color="gray">
+			<Text component="p" size="sm" m={0} color="gray" mb="sm">
 				{description}
 			</Text>
 
 			{withButtons && (
-				<Box className={classes.footer} mt="sm">
+				<Box className={classes.footer}>
 					<Button variant="filled" fullWidth onClick={onClick}>
 						Donate
 					</Button>

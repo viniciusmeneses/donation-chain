@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import {
 	Col,
@@ -27,18 +27,55 @@ const useStyles = createStyles(theme => ({
 	},
 }));
 
-export const HomePage = () => {
+const Charity = charity => {
 	const { classes } = useStyles();
 	const donationModal = useModalState();
 
-	const { charities, loading } = useCharities();
+	return (
+		<>
+			<CharityCard {...bindTrigger(donationModal)} {...charity} />
 
-	const causes = useMemo(() => uniq(charities.map(prop('cause'))), [charities]);
+			<Modal
+				{...bindModal(donationModal)}
+				title="Support the charity"
+				size="xl"
+				classNames={{
+					modal: classes.modal,
+					title: classes.modalTitle,
+				}}
+				closeOnClickOutside={false}
+			>
+				<Donation {...charity} />
+			</Modal>
+		</>
+	);
+};
+
+export const HomePage = () => {
+	const [causeFilter, setCauseFilter] = useState();
+
+	const { charities: allCharities, loading } = useCharities();
+	const causes = useMemo(
+		() => uniq(allCharities.map(prop('cause'))),
+		[allCharities]
+	);
+
+	const charities = useMemo(
+		() =>
+			allCharities.filter(
+				({ cause }) => causeFilter == null || causeFilter === cause
+			),
+		[allCharities, causeFilter]
+	);
 
 	return (
 		<Grid gutter="xl">
 			<Col span={3}>
-				<Sidebar causes={causes} loading={loading} />
+				<Sidebar
+					causes={causes}
+					loading={loading}
+					onSelectCause={cause => setCauseFilter(cause)}
+				/>
 			</Col>
 
 			<Col span={9}>
@@ -54,22 +91,7 @@ export const HomePage = () => {
 						</>
 					) : (
 						charities.map(charity => (
-							<Fragment key={charity.recipient}>
-								<CharityCard {...bindTrigger(donationModal)} {...charity} />
-
-								<Modal
-									{...bindModal(donationModal)}
-									title="Support the charity"
-									size="xl"
-									classNames={{
-										modal: classes.modal,
-										title: classes.modalTitle,
-									}}
-									closeOnClickOutside={false}
-								>
-									<Donation {...charity} />
-								</Modal>
-							</Fragment>
+							<Charity key={charity.recipient} {...charity} />
 						))
 					)}
 				</SimpleGrid>

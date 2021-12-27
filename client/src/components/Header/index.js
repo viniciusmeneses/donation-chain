@@ -48,7 +48,7 @@ export const Header = () => {
 	return (
 		<MtnHeader fixed>
 			<Container size="xl" className={classes.header}>
-				<Image width="190px" height="auto" src={logo} alt="DonatIonChain" />
+				<Image width="190px" height="auto" src={logo} alt="DonationChain" />
 
 				{wallet.address ? (
 					<Button

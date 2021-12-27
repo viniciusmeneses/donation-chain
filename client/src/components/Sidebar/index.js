@@ -1,5 +1,7 @@
 import {
 	Avatar,
+	Box,
+	Button,
 	UnstyledButton,
 	Card,
 	Divider,
@@ -9,6 +11,8 @@ import {
 	Text,
 	createStyles,
 } from '@mantine/core';
+
+import { identity } from 'ramda';
 
 import { CauseIcon } from '../CauseIcon';
 
@@ -25,11 +29,11 @@ const useStyles = createStyles((theme, { color }) => ({
 	},
 }));
 
-const Cause = ({ color, label }) => {
+const Cause = ({ color, label, ...props }) => {
 	const { classes } = useStyles({ color });
 
 	return (
-		<UnstyledButton className={classes.cause}>
+		<UnstyledButton className={classes.cause} {...props}>
 			<Group spacing="xs">
 				<Avatar size={28} color={color}>
 					<CauseIcon label={label} size={18} />
@@ -43,18 +47,40 @@ const Cause = ({ color, label }) => {
 	);
 };
 
-export const Sidebar = ({ loading, causes: causeIds = [] }) => (
+export const Sidebar = ({
+	loading,
+	causes: causeIds = [],
+	onSelectCause = identity,
+}) => (
 	<Card shadow="sm">
-		<Text
-			weight={500}
-			mt={0}
+		<Box
 			mb="4px"
-			size="sm"
-			component="h3"
-			sx={theme => ({ color: theme.colors.gray[6] })}
+			sx={{
+				display: 'flex',
+				justifyContent: 'space-between',
+				alignItems: 'center',
+			}}
 		>
-			Causes
-		</Text>
+			<Text
+				weight={500}
+				mt={0}
+				mb={0}
+				size="sm"
+				component="h3"
+				sx={theme => ({ color: theme.colors.gray[6] })}
+			>
+				Causes
+			</Text>
+			<Button
+				variant="light"
+				size="xs"
+				color="yellow"
+				compact
+				onClick={() => onSelectCause(null)}
+			>
+				All
+			</Button>
+		</Box>
 
 		<Divider />
 
@@ -66,7 +92,15 @@ export const Sidebar = ({ loading, causes: causeIds = [] }) => (
 					<Skeleton height={28} radius="sm" />
 				</>
 			) : (
-				causeIds.map(cause => <Cause key={cause} {...causes[cause]} />)
+				causeIds
+					.sort()
+					.map(cause => (
+						<Cause
+							key={cause}
+							onClick={() => onSelectCause(cause)}
+							{...causes[cause]}
+						/>
+					))
 			)}
 		</SimpleGrid>
 	</Card>
