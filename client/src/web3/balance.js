@@ -1,36 +1,43 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+
+import BigNumber from 'bignumber.js';
 
 import { Web3Context } from './context';
 
-import BEP20 from './contracts/IBEP20.json';
+import { tokens } from './utils';
 
-import tokens from './config/tokens.json';
+import BEP20 from './contracts/IBEP20.json';
 
 export const useBalance = token => {
 	const { web3, account } = useContext(Web3Context);
 
-	const [balance, setBalance] = useState(0);
+	const [balance, setBalanceState] = useState(BigNumber(0));
 	const [loading, setLoading] = useState(false);
+
+	const setBalance = useCallback(
+		balance => setBalanceState(BigNumber(web3.utils.fromWei(balance))),
+		[setBalanceState]
+	);
 
 	useEffect(async () => {
 		if (account) {
 			setLoading(true);
+
 			if (token) {
 				const tokenContract = new web3.eth.Contract(
 					BEP20.abi,
-					tokens[process.env.REACT_APP_NETWORK][token]
+					tokens[token].address
 				);
-				const balance = await tokenContract.methods.balanceOf(account).call();
-				setBalance(web3.utils.fromWei(balance));
+				setBalance(await tokenContract.methods.balanceOf(account).call());
 			} else {
-				const balance = await web3.eth.getBalance(account);
-				setBalance(web3.utils.fromWei(balance));
+				setBalance(await web3.eth.getBalance(account));
 			}
+
 			setLoading(false);
 		} else {
-			setBalance(0);
+			setBalanceState(BigNumber(0));
 		}
-	}, [account]);
+	}, [account, setLoading, token, web3, setBalance, setBalanceState]);
 
 	return { balance, loading };
 };

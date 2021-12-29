@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
 	Anchor,
 	Box,
@@ -9,6 +11,7 @@ import {
 	Image,
 	InputWrapper,
 	SegmentedControl,
+	Skeleton,
 	Text,
 	TextInput,
 	Title,
@@ -17,9 +20,15 @@ import {
 
 import { useForm } from '@mantine/hooks';
 
+import BigNumber from 'bignumber.js';
+
+import { identity } from 'ramda';
+
 import { CharityCard } from '../CharityCard';
 
-import { useBalance, useDonation, useWallet } from '../../web3';
+import { useApproval, useBalance, useDonation, useWallet } from '../../web3';
+
+import useNotifications from '../../hooks/notifications';
 
 import bnbLogo from '../../assets/images/bnb.png';
 import busdLogo from '../../assets/images/busd.png';
@@ -39,35 +48,147 @@ const useStyles = createStyles(theme => ({
 		borderBottom: '1px solid',
 		borderBottomColor: theme.colors.gray[4],
 	},
+	buttonsContainer: {
+		display: 'flex',
+		flexWrap: 'nowrap',
+		gap: '8px',
+	},
 }));
 
-export const Donation = charity => {
+const tokenOptions = [
+	{
+		value: 'BNB',
+		label: (
+			<Center>
+				<Image src={bnbLogo} width="24px" height="auto" />
+				<Box ml={10} component="span">
+					BNB
+				</Box>
+			</Center>
+		),
+	},
+	{
+		value: 'BUSD',
+		label: (
+			<Center>
+				<Image src={busdLogo} width="24px" height="auto" />
+				<Box ml={10} component="span">
+					BUSD
+				</Box>
+			</Center>
+		),
+	},
+];
+
+export const Donation = ({ charity, onDonate = identity }) => {
 	const { classes } = useStyles();
 
-	const wallet = useWallet();
-	const bnbCoin = useBalance();
-	const busdToken = useBalance('BUSD');
+	const wallet = useWallet({});
+	const bnb = useBalance();
+	const busd = useBalance('BUSD');
 
-	const { donate, donating } = useDonation(charity);
+	const busdApproval = useApproval('BUSD');
+	const donation = useDonation(charity);
+
+	const notifications = useNotifications();
+
+	const loading = bnb.loading || busd.loading || busdApproval.loading;
 
 	const form = useForm({
 		initialValues: {
-			currency: 'BUSD',
+			token: 'BNB',
 			amount: '',
 		},
 		validationRules: {
-			amount: (value, { currency }) => {
-				const parsed = parseFloat(value);
-				const max = parseFloat(
-					currency === 'BUSD' ? busdToken.balance : bnbCoin.balance
-				);
-				return parsed && parsed > 0 && parsed <= max;
+			amount: (value, { token }) => {
+				const bigValue = BigNumber(value);
+				const balance = token === 'BUSD' ? busd.balance : bnb.balance;
+				return bigValue.isPositive() && bigValue.isLessThanOrEqualTo(balance);
 			},
 		},
 		errorMessages: {
 			amount: 'Invalid amount',
 		},
 	});
+
+	const onSubmit = useCallback(
+		({ amount, token }) => {
+			let notification;
+
+			const onPending = () => {
+				notification = notifications.show({
+					type: 'LOADING',
+					title: 'Transaction waiting confirmation',
+					message: `Sending a donation of ${amount} ${token} to ${charity.name}`,
+				});
+			};
+
+			const onSuccess = receipt => {
+				notifications.update(notification, {
+					type: 'SUCCESS',
+					title: 'Transaction confirmed',
+					message: `Donation of ${amount} ${token} sent to ${charity.name}`,
+				});
+				onDonate(receipt);
+			};
+
+			const onError = ({ message }) =>
+				notifications.update(notification, {
+					type: 'ERROR',
+					title: 'Transaction failed',
+					message,
+				});
+
+			donation.donate({
+				token: token !== 'BNB' ? token : null,
+				amount: BigNumber(amount),
+				onPending,
+				onSuccess,
+				onError,
+			});
+		},
+		[donation.donate, notifications, charity, onDonate]
+	);
+
+	const onBusdApprove = useCallback(() => {
+		let notification;
+
+		const onPending = () => {
+			notification = notifications.show({
+				type: 'LOADING',
+				title: 'Transaction waiting confirmation',
+				message: 'Approving DonationChain to spend BUSD',
+			});
+		};
+
+		const onSuccess = () =>
+			notifications.update(notification, {
+				type: 'SUCCESS',
+				title: 'Transaction confirmed',
+				message:
+					'DonationChain approved to spend BUSD. Now you can donate to charities',
+			});
+
+		const onError = ({ message }) =>
+			notifications.update(notification, {
+				type: 'ERROR',
+				title: 'Transaction failed',
+				message,
+			});
+
+		busdApproval.approve({ onPending, onSuccess, onError });
+	}, [busdApproval.approve, notifications]);
+
+	const onConnectWallet = useCallback(() => {
+		const onError = ({ message }) =>
+			notifications.show({
+				type: 'ERROR',
+				title: 'Failed to connect wallet',
+				message,
+			});
+
+		wallet.connect({ onError });
+	}, [wallet.connect, notifications]);
 
 	return (
 		<Grid gutter="xl">
@@ -80,62 +201,69 @@ export const Donation = charity => {
 			</Col>
 			<Col span={6}>
 				<Card shadow="md" padding="lg" className={classes.fullHeight}>
-					<form onSubmit={form.onSubmit(values => donate(1, '0x0'))}>
+					<form onSubmit={form.onSubmit(onSubmit)}>
 						<InputWrapper size="md" label="Select the cryptocurrency">
 							<SegmentedControl
+								{...form.getInputProps('token')}
 								fullWidth
 								size="md"
 								sx={theme => ({ marginBottom: theme.spacing.lg })}
-								data={[
-									{
-										value: 'BUSD',
-										label: (
-											<Center>
-												<Image src={busdLogo} width="24px" height="auto" />
-												<Box ml={10} component="span">
-													BUSD
-												</Box>
-											</Center>
-										),
-									},
-									{
-										value: 'BNB',
-										label: (
-											<Center>
-												<Image src={bnbLogo} width="24px" height="auto" />
-												<Box ml={10} component="span">
-													BNB
-												</Box>
-											</Center>
-										),
-									},
-								]}
-								{...form.getInputProps('currency')}
+								data={tokenOptions}
 							/>
 						</InputWrapper>
 
 						<TextInput
+							{...form.getInputProps('amount')}
 							size="md"
 							placeholder="0.0"
 							label="Amount"
-							description={`Balance: ${
-								form.values.currency === 'BUSD'
-									? busdToken.balance
-									: bnbCoin.balance
-							}`}
 							sx={theme => ({ marginBottom: theme.spacing.lg })}
-							{...form.getInputProps('amount')}
+							description={
+								wallet.address && !loading
+									? `Balance: ${(form.values.token === 'BUSD'
+											? busd.balance
+											: bnb.balance
+									  ).toString()}`
+									: loading && (
+											<Skeleton height={16.7} radius="sm" width={150} />
+									  )
+							}
 						/>
 
-						<Button
-							fullWidth
-							type={wallet.address ? 'submit' : 'button'}
-							size="md"
-							onClick={wallet.address ? undefined : wallet.connect}
-							loading={wallet.connecting}
-						>
-							{wallet.address ? 'Donate' : 'Connect Wallet'}
-						</Button>
+						{wallet.address ? (
+							<Box className={classes.buttonsContainer}>
+								{!busdApproval.loading && !busdApproval.approved && (
+									<Button
+										fullWidth
+										size="md"
+										onClick={onBusdApprove}
+										loading={busdApproval.approving}
+										disabled={loading}
+									>
+										Approve
+									</Button>
+								)}
+
+								<Button
+									fullWidth
+									type="submit"
+									size="md"
+									loading={donation.donating}
+									disabled={loading || !busdApproval.approved}
+								>
+									Donate
+								</Button>
+							</Box>
+						) : (
+							<Button
+								fullWidth
+								size="md"
+								onClick={onConnectWallet}
+								loading={wallet.connecting}
+							>
+								Connect Wallet
+							</Button>
+						)}
 					</form>
 				</Card>
 			</Col>

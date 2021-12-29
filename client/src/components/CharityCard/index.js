@@ -77,7 +77,13 @@ export const CharityCard = ({
 				</Avatar>
 			</Group>
 
-			<Text component="p" size="sm" m={0} color="gray" mb="sm">
+			<Text
+				component="p"
+				size="sm"
+				m={0}
+				color="gray"
+				mb={withButtons ? 'sm' : 0}
+			>
 				{description}
 			</Text>
 

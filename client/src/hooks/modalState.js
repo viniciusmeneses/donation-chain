@@ -3,8 +3,8 @@ import { useState, useCallback } from 'react';
 const useModalState = (initialOpened = false) => {
 	const [opened, setOpened] = useState(initialOpened);
 
-	const open = useCallback(() => setOpened(true));
-	const close = useCallback(() => setOpened(false));
+	const open = useCallback(() => setOpened(true), [setOpened]);
+	const close = useCallback(() => setOpened(false), [setOpened]);
 
 	return { opened, open, close };
 };

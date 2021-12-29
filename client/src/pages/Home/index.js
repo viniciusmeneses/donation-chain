@@ -27,7 +27,7 @@ const useStyles = createStyles(theme => ({
 	},
 }));
 
-const Charity = charity => {
+const Charity = ({ charity, onDonate }) => {
 	const { classes } = useStyles();
 	const donationModal = useModalState();
 
@@ -45,7 +45,13 @@ const Charity = charity => {
 				}}
 				closeOnClickOutside={false}
 			>
-				<Donation {...charity} />
+				<Donation
+					charity={charity}
+					onDonate={() => {
+						donationModal.close();
+						onDonate();
+					}}
+				/>
 			</Modal>
 		</>
 	);
@@ -54,7 +60,7 @@ const Charity = charity => {
 export const HomePage = () => {
 	const [causeFilter, setCauseFilter] = useState();
 
-	const { charities: allCharities, loading } = useCharities();
+	const { charities: allCharities, loading, reload } = useCharities();
 	const causes = useMemo(
 		() => uniq(allCharities.map(prop('cause'))),
 		[allCharities]
@@ -91,7 +97,11 @@ export const HomePage = () => {
 						</>
 					) : (
 						charities.map(charity => (
-							<Charity key={charity.recipient} {...charity} />
+							<Charity
+								key={charity.recipient}
+								charity={charity}
+								onDonate={reload}
+							/>
 						))
 					)}
 				</SimpleGrid>

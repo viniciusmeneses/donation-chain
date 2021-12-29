@@ -72,14 +72,22 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 						BNB Balance
 					</Text>
 					<Text mt={0}>
-						{bnbCoin.loading ? <Skeleton height={25} /> : bnbCoin.balance}
+						{bnbCoin.loading ? (
+							<Skeleton height={25} />
+						) : (
+							bnbCoin.balance.toString()
+						)}
 					</Text>
 
 					<Text color="dimmed" size="xs" mb={0}>
 						BUSD Balance
 					</Text>
 					<Text my={0}>
-						{busdToken.loading ? <Skeleton height={25} /> : busdToken.balance}
+						{busdToken.loading ? (
+							<Skeleton height={25} />
+						) : (
+							busdToken.balance.toString()
+						)}
 					</Text>
 
 					<Divider />

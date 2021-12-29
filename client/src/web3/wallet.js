@@ -1,46 +1,46 @@
 import { useCallback, useContext, useState } from 'react';
 
-import { useNotifications } from '@mantine/notifications';
-
-import { FaTimes } from 'react-icons/fa';
+import { identity } from 'ramda';
 
 import { Web3Context } from './context';
 
-import { addOrChangeNetwork } from './utils';
+import { addOrSwitchNetwork } from './utils';
 
 export const useWallet = () => {
-	const { account, setAccount } = useContext(Web3Context);
+	const { web3, account, setAccount } = useContext(Web3Context);
 	const [connecting, setConnecting] = useState(false);
 
-	const notifications = useNotifications();
+	const connect = useCallback(
+		async ({ onSuccess = identity, onError = identity }) => {
+			setConnecting(true);
 
-	const connect = useCallback(async () => {
-		setConnecting(true);
+			const { ethereum } = window;
 
-		const { ethereum } = window;
-
-		try {
-			if (ethereum) {
-				const [addr] = await ethereum.request({
-					method: 'eth_requestAccounts',
+			try {
+				if (ethereum) {
+					const [addr] = await ethereum.request({
+						method: 'eth_requestAccounts',
+					});
+					await addOrSwitchNetwork();
+					setAccount(addr);
+					web3.setProvider(ethereum);
+					onSuccess({ account: addr });
+				} else {
+					throw new Error('MetaMask not installed');
+				}
+			} catch (e) {
+				onError({
+					message:
+						e.code === 4001
+							? 'User rejected wallet connection or network switch'
+							: e.message,
 				});
-				await addOrChangeNetwork();
-				setAccount(addr);
-			} else {
-				throw new Error('MetaMask not installed');
 			}
-		} catch (e) {
-			notifications.showNotification({
-				disallowClose: true,
-				title: 'Failed to connect wallet',
-				message: e.code === 4001 ? 'User rejected connection' : e.message,
-				color: 'red',
-				icon: <FaTimes />,
-			});
-		}
 
-		setConnecting(false);
-	}, []);
+			setConnecting(false);
+		},
+		[setConnecting, setAccount, web3]
+	);
 
 	const disconnect = useCallback(() => setAccount(null), [setAccount]);
 

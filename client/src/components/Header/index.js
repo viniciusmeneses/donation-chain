@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from 'react';
+
 import {
 	Button,
 	Container,
@@ -7,13 +9,13 @@ import {
 	createStyles,
 } from '@mantine/core';
 
-import { useEffect } from 'react';
-
 import { IoLink, IoWalletOutline } from 'react-icons/io5';
 
 import { Wallet } from '../Wallet';
 
 import useModalState, { bindModal, bindTrigger } from '../../hooks/modalState';
+
+import useNotifications from '../../hooks/notifications';
 
 import { useWallet } from '../../web3';
 
@@ -40,10 +42,22 @@ export const Header = () => {
 	const walletModal = useModalState();
 
 	const wallet = useWallet();
+	const notifications = useNotifications();
+
+  const onConnectWallet = useCallback(() => {
+		const onError = ({ message }) =>
+			notifications.show({
+				type: 'ERROR',
+				title: 'Failed to connect wallet',
+				message,
+			});
+
+		wallet.connect({ onError });
+	}, [wallet.connect, notifications]);
 
 	useEffect(() => {
 		if (!wallet.address) walletModal.close();
-	}, [wallet.address]);
+	}, [wallet.address, walletModal.close]);
 
 	return (
 		<MtnHeader fixed>
@@ -61,7 +75,7 @@ export const Header = () => {
 				) : (
 					<Button
 						leftIcon={<IoLink size={18} />}
-						onClick={wallet.connect}
+						onClick={onConnectWallet}
 						loading={wallet.connecting}
 					>
 						Connect Wallet
