@@ -37,7 +37,7 @@ const Charity = ({ charity, onDonate }) => {
 
 			<Modal
 				{...bindModal(donationModal)}
-				title="Support the charity"
+				title="Apoie a instituição"
 				size="xl"
 				classNames={{
 					modal: classes.modal,

@@ -7,12 +7,12 @@ export const removeHttpFromUrl = url =>
 	url.replace(/^(https?:\/\/)?(www\.)?/, '');
 
 export const causes = [
-	{ label: 'Animals', color: 'orange' },
-	{ label: 'Culture', color: 'blue' },
-	{ label: 'Education', color: 'violet' },
-	{ label: 'Environment', color: 'green' },
-	{ label: 'Healthcare', color: 'red' },
-	{ label: 'Justice', color: 'lime' },
-	{ label: 'Religion', color: 'yellow' },
-	{ label: 'Research', color: 'cyan' },
+	{ label: 'Animais', color: 'orange' },
+	{ label: 'Cultura', color: 'blue' },
+	{ label: 'Educação', color: 'violet' },
+	{ label: 'Meio Ambiente', color: 'green' },
+	{ label: 'Saúde', color: 'red' },
+	{ label: 'Justiça', color: 'lime' },
+	{ label: 'Religião', color: 'yellow' },
+	{ label: 'Pesquisa', color: 'cyan' },
 ];

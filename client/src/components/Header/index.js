@@ -44,11 +44,11 @@ export const Header = () => {
 	const wallet = useWallet();
 	const notifications = useNotifications();
 
-  const onConnectWallet = useCallback(() => {
+	const onConnectWallet = useCallback(() => {
 		const onError = ({ message }) =>
 			notifications.show({
 				type: 'ERROR',
-				title: 'Failed to connect wallet',
+				title: 'Falha ao conectar carteira',
 				message,
 			});
 
@@ -78,13 +78,13 @@ export const Header = () => {
 						onClick={onConnectWallet}
 						loading={wallet.connecting}
 					>
-						Connect Wallet
+						Conectar Carteira
 					</Button>
 				)}
 
 				<Modal
 					{...bindModal(walletModal)}
-					title="Your wallet"
+					title="Sua carteira"
 					size="xs"
 					classNames={{
 						title: classes.modalTitle,

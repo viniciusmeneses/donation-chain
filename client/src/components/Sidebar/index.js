@@ -69,7 +69,7 @@ export const Sidebar = ({
 				component="h3"
 				sx={theme => ({ color: theme.colors.gray[6] })}
 			>
-				Causes
+				Causas
 			</Text>
 			<Button
 				variant="light"
@@ -78,7 +78,7 @@ export const Sidebar = ({
 				compact
 				onClick={() => onSelectCause(null)}
 			>
-				All
+				Tudo
 			</Button>
 		</Box>
 

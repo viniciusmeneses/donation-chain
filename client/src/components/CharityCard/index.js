@@ -9,6 +9,7 @@ import {
 	UnstyledButton,
 	Text,
 	Title,
+	Tooltip,
 	createStyles,
 } from '@mantine/core';
 
@@ -55,7 +56,7 @@ export const CharityCard = ({
 				<Image
 					src={`https://source.unsplash.com/featured/300x150/?${causes[cause].label}`}
 					height={150}
-					alt="Norway"
+					alt="Charity Image"
 				/>
 			</Card.Section>
 
@@ -72,9 +73,11 @@ export const CharityCard = ({
 					</Anchor>
 				</Box>
 
-				<Avatar color={causes[cause].color} radius="xl">
-					<CauseIcon label={causes[cause].label} />
-				</Avatar>
+				<Tooltip label={causes[cause].label} withArrow>
+					<Avatar color={causes[cause].color} radius="xl">
+						<CauseIcon label={causes[cause].label} />
+					</Avatar>
+				</Tooltip>
 			</Group>
 
 			<Text
@@ -90,7 +93,7 @@ export const CharityCard = ({
 			{withButtons && (
 				<Box className={classes.footer}>
 					<Button variant="filled" fullWidth onClick={onClick}>
-						Donate
+						Doar
 					</Button>
 
 					<UnstyledButton onClick={onClick}>
@@ -101,7 +104,8 @@ export const CharityCard = ({
 							ml="sm"
 							className={classes.nowrap}
 						>
-							{donationCount} donation{parseInt(donationCount) !== 1 ? 's' : ''}
+							{donationCount}{' '}
+							{parseInt(donationCount) !== 1 ? 'doações' : 'doação'}
 						</Text>
 					</UnstyledButton>
 				</Box>

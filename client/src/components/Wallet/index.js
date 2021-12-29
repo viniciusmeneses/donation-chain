@@ -50,11 +50,11 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 				data={[
 					{
 						value: 'general',
-						label: 'General',
+						label: 'Geral',
 					},
 					{
 						value: 'donations',
-						label: 'Donations',
+						label: 'Doações',
 					},
 				]}
 				value={activeTab}
@@ -64,12 +64,12 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 			{activeTab === 'general' ? (
 				<Group direction="column" grow>
 					<Text color="dimmed" size="xs" mb={0}>
-						Address
+						Endereço
 					</Text>
 					<Text mt={0}>{wallet.address}</Text>
 
 					<Text color="dimmed" size="xs" mb={0}>
-						BNB Balance
+						Saldo em BNB
 					</Text>
 					<Text mt={0}>
 						{bnbCoin.loading ? (
@@ -80,7 +80,7 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 					</Text>
 
 					<Text color="dimmed" size="xs" mb={0}>
-						BUSD Balance
+						Saldo em BUSD
 					</Text>
 					<Text my={0}>
 						{busdToken.loading ? (
@@ -93,7 +93,7 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 					<Divider />
 
 					<Button color="red" onClick={onDisconnect}>
-						Disconnect
+						Desconectar
 					</Button>
 				</Group>
 			) : (

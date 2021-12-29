@@ -26,13 +26,13 @@ export const useWallet = () => {
 					web3.setProvider(ethereum);
 					onSuccess({ account: addr });
 				} else {
-					throw new Error('MetaMask not installed');
+					throw new Error('MetaMask não está instalada');
 				}
 			} catch (e) {
 				onError({
 					message:
 						e.code === 4001
-							? 'User rejected wallet connection or network switch'
+							? 'Usuário rejeitou a conexão com a carteira'
 							: e.message,
 				});
 			}

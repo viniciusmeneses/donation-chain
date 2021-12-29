@@ -14,21 +14,21 @@ import {
 export const CauseIcon = ({ label, ...props }) => {
 	const Component = useMemo(() => {
 		switch (label) {
-			case 'Animals':
+			case 'Animais':
 				return FaPaw;
-			case 'Culture':
+			case 'Cultura':
 				return FaUsers;
-			case 'Education':
+			case 'Educação':
 				return FaBook;
-			case 'Environment':
+			case 'Meio Ambiente':
 				return FaTree;
-			case 'Healthcare':
+			case 'Saúde':
 				return FaHeart;
-			case 'Justice':
+			case 'Justiça':
 				return FaBalanceScale;
-			case 'Religion':
+			case 'Religião':
 				return FaPray;
-			case 'Research':
+			case 'Pesquisa':
 				return FaSearch;
 			default:
 				return null;

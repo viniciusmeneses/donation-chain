@@ -15,6 +15,7 @@ import {
 	Text,
 	TextInput,
 	Title,
+	Tooltip,
 	createStyles,
 } from '@mantine/core';
 
@@ -107,7 +108,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 			},
 		},
 		errorMessages: {
-			amount: 'Invalid amount',
+			amount: 'Valor inválido',
 		},
 	});
 
@@ -118,16 +119,16 @@ export const Donation = ({ charity, onDonate = identity }) => {
 			const onPending = () => {
 				notification = notifications.show({
 					type: 'LOADING',
-					title: 'Transaction waiting confirmation',
-					message: `Sending a donation of ${amount} ${token} to ${charity.name}`,
+					title: 'Transação aguardando confirmação',
+					message: `Enviando doação de ${amount} ${token} para ${charity.name}`,
 				});
 			};
 
 			const onSuccess = receipt => {
 				notifications.update(notification, {
 					type: 'SUCCESS',
-					title: 'Transaction confirmed',
-					message: `Donation of ${amount} ${token} sent to ${charity.name}`,
+					title: 'Transação confirmada',
+					message: `Doação de ${amount} ${token} enviada para ${charity.name}`,
 				});
 				onDonate(receipt);
 			};
@@ -135,7 +136,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 			const onError = ({ message }) =>
 				notifications.update(notification, {
 					type: 'ERROR',
-					title: 'Transaction failed',
+					title: 'Transação falhou',
 					message,
 				});
 
@@ -156,23 +157,22 @@ export const Donation = ({ charity, onDonate = identity }) => {
 		const onPending = () => {
 			notification = notifications.show({
 				type: 'LOADING',
-				title: 'Transaction waiting confirmation',
-				message: 'Approving DonationChain to spend BUSD',
+				title: 'Transação aguardando confirmação',
+				message: 'Permitindo doações utilizando BUSD',
 			});
 		};
 
 		const onSuccess = () =>
 			notifications.update(notification, {
 				type: 'SUCCESS',
-				title: 'Transaction confirmed',
-				message:
-					'DonationChain approved to spend BUSD. Now you can donate to charities',
+				title: 'Transação confirmada',
+				message: 'Agora é possivel realizar doações com BUSD',
 			});
 
 		const onError = ({ message }) =>
 			notifications.update(notification, {
 				type: 'ERROR',
-				title: 'Transaction failed',
+				title: 'Transação falhou',
 				message,
 			});
 
@@ -183,7 +183,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 		const onError = ({ message }) =>
 			notifications.show({
 				type: 'ERROR',
-				title: 'Failed to connect wallet',
+				title: 'Falha ao conectar carteira',
 				message,
 			});
 
@@ -202,7 +202,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 			<Col span={6}>
 				<Card shadow="md" padding="lg" className={classes.fullHeight}>
 					<form onSubmit={form.onSubmit(onSubmit)}>
-						<InputWrapper size="md" label="Select the cryptocurrency">
+						<InputWrapper size="md" label="Selecione a moeda">
 							<SegmentedControl
 								{...form.getInputProps('token')}
 								fullWidth
@@ -216,11 +216,11 @@ export const Donation = ({ charity, onDonate = identity }) => {
 							{...form.getInputProps('amount')}
 							size="md"
 							placeholder="0.0"
-							label="Amount"
+							label="Valor"
 							sx={theme => ({ marginBottom: theme.spacing.lg })}
 							description={
 								wallet.address && !loading
-									? `Balance: ${(form.values.token === 'BUSD'
+									? `Saldo: ${(form.values.token === 'BUSD'
 											? busd.balance
 											: bnb.balance
 									  ).toString()}`
@@ -233,17 +233,22 @@ export const Donation = ({ charity, onDonate = identity }) => {
 						{wallet.address ? (
 							<Box className={classes.buttonsContainer}>
 								{!busdApproval.loading && !busdApproval.approved && (
-									<Button
-										fullWidth
-										size="md"
-										onClick={onBusdApprove}
-										loading={busdApproval.approving}
-										disabled={loading}
+									<Tooltip
+										label="Permitir doações utilizando BUSD"
+										position="bottom"
+										withArrow
 									>
-										Approve
-									</Button>
+										<Button
+											fullWidth
+											size="md"
+											onClick={onBusdApprove}
+											loading={busdApproval.approving}
+											disabled={loading}
+										>
+											Permitir
+										</Button>
+									</Tooltip>
 								)}
-
 								<Button
 									fullWidth
 									type="submit"
@@ -251,7 +256,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 									loading={donation.donating}
 									disabled={loading || !busdApproval.approved}
 								>
-									Donate
+									Doar
 								</Button>
 							</Box>
 						) : (
@@ -261,7 +266,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 								onClick={onConnectWallet}
 								loading={wallet.connecting}
 							>
-								Connect Wallet
+								Conectar Carteira
 							</Button>
 						)}
 					</form>
