@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import {
 	Col,
@@ -14,6 +14,10 @@ import { prop, uniq } from 'ramda';
 import { CharityCard, Donation, Sidebar } from '../../components';
 
 import useModalState, { bindModal, bindTrigger } from '../../hooks/modalState';
+
+import useQueryString from '../../hooks/queryString';
+
+import { causes as causeList } from '../../utils';
 
 import { useCharities } from '../../web3';
 
@@ -58,9 +62,10 @@ const Charity = ({ charity, onDonate }) => {
 };
 
 export const HomePage = () => {
-	const [causeFilter, setCauseFilter] = useState();
+	const [params] = useQueryString();
 
 	const { charities: allCharities, loading, reload } = useCharities();
+
 	const causes = useMemo(
 		() => uniq(allCharities.map(prop('cause'))),
 		[allCharities]
@@ -69,19 +74,17 @@ export const HomePage = () => {
 	const charities = useMemo(
 		() =>
 			allCharities.filter(
-				({ cause }) => causeFilter == null || causeFilter === cause
+				({ cause }) =>
+					params.cause == null ||
+					params.cause === causeList[cause].label.toLowerCase()
 			),
-		[allCharities, causeFilter]
+		[allCharities, params.cause]
 	);
 
 	return (
 		<Grid gutter="xl">
 			<Col span={3}>
-				<Sidebar
-					causes={causes}
-					loading={loading}
-					onSelectCause={cause => setCauseFilter(cause)}
-				/>
+				<Sidebar causes={causes} loading={loading} />
 			</Col>
 
 			<Col span={9}>

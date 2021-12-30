@@ -7,6 +7,8 @@ import {
 
 import { NotificationsProvider } from '@mantine/notifications';
 
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
 import { Header } from './components';
 
 import { HomePage } from './pages';
@@ -41,7 +43,11 @@ const App = () => {
 				<Web3Provider>
 					<AppShell className={classes.app} header={<Header />}>
 						<Container size="xl" className={classes.container}>
-							<HomePage />
+							<BrowserRouter>
+								<Routes>
+									<Route path="/" element={<HomePage />} />
+								</Routes>
+							</BrowserRouter>
 						</Container>
 					</AppShell>
 				</Web3Provider>
