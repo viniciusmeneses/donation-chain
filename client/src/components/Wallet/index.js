@@ -1,7 +1,6 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import {
-	Anchor,
 	Box,
 	Button,
 	Divider,
@@ -14,9 +13,9 @@ import {
 
 import { identity } from 'ramda';
 
-import { FiExternalLink } from 'react-icons/fi';
+import { useBalance, useWallet, useDonations } from '../../web3';
 
-import { useBalance, useWallet } from '../../web3';
+import { formatDateTime } from '../../utils';
 
 const useStyles = createStyles({
 	donations: {
@@ -26,6 +25,11 @@ const useStyles = createStyles({
 		display: 'flex',
 		justifyContent: 'space-between',
 	},
+	flexCenter: {
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 });
 
 export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
@@ -33,6 +37,8 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 	const [activeTab, setActiveTab] = useState('general');
 
 	const wallet = useWallet();
+	const donations = useDonations({ address: wallet.address });
+
 	const bnbCoin = useBalance();
 	const busdToken = useBalance('BUSD');
 
@@ -73,7 +79,7 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 					</Text>
 					<Text mt={0}>
 						{bnbCoin.loading ? (
-							<Skeleton height={25} />
+							<Skeleton height={25} radius="sm" />
 						) : (
 							bnbCoin.balance.toString()
 						)}
@@ -84,7 +90,7 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 					</Text>
 					<Text my={0}>
 						{busdToken.loading ? (
-							<Skeleton height={25} />
+							<Skeleton height={25} radius="sm" />
 						) : (
 							busdToken.balance.toString()
 						)}
@@ -97,29 +103,50 @@ export const Wallet = ({ onDisconnect: onDisconnectCallback = identity }) => {
 					</Button>
 				</Group>
 			) : (
-				<Group direction="column" grow noWrap className={classes.donations}>
-					<Box mb={0}>
-						<Box sx={classes.flexBetween}>
-							<Text>43.63 BUSD</Text>
-							<Anchor
-								href="#"
-								target="_blank"
-								sx={{ '&:hover': { textDecoration: 'none' } }}
-							>
-								<FiExternalLink />
-							</Anchor>
-						</Box>
-						<Box sx={classes.flexBetween}>
-							<Text color="dimmed" size="xs">
-								Mercy For Animals
-							</Text>
-							<Text color="dimmed" size="xs">
-								30/11/2021
-							</Text>
-						</Box>
-					</Box>
+				<Group
+					direction="column"
+					withGutter
+					grow
+					noWrap
+					className={classes.donations}
+				>
+					{donations.loading && (
+						<>
+							<Skeleton height={44} radius="sm" m={0} />
+							<Divider my={8} />
+							<Skeleton height={44} radius="sm" m={0} />
+							<Divider my={8} />
+							<Skeleton height={44} radius="sm" m={0} />
+						</>
+					)}
 
-					<Divider />
+					{!donations.loading && donations.history.length === 0 ? (
+						<Box className={classes.flexCenter}>
+							<Text color="dimmed" size="sm">
+								Nenhuma doação realizada
+							</Text>
+						</Box>
+					) : (
+						donations.history.map(({ charity, amount, token, date }, i) => (
+							<React.Fragment key={i}>
+								<Box>
+									<Text>
+										{amount.toString()} {token || 'BNB'}
+									</Text>
+									<Box className={classes.flexBetween}>
+										<Text color="dimmed" size="xs">
+											{charity.name}
+										</Text>
+										<Text color="dimmed" size="xs">
+											{formatDateTime(date)}
+										</Text>
+									</Box>
+								</Box>
+
+								{i + 1 < donations.history.length && <Divider my={8} />}
+							</React.Fragment>
+						))
+					)}
 				</Group>
 			)}
 		</>
