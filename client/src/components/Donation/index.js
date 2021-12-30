@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
 import {
-	Anchor,
 	Box,
 	Button,
 	Card,
@@ -27,9 +26,17 @@ import { identity } from 'ramda';
 
 import { CharityCard } from '../CharityCard';
 
-import { useApproval, useBalance, useDonation, useWallet } from '../../web3';
+import {
+	useApproval,
+	useBalance,
+	useDonation,
+	useDonations,
+	useWallet,
+} from '../../web3';
 
 import useNotifications from '../../hooks/notifications';
+
+import { shortenAddress, formatDateTime } from '../../utils';
 
 import bnbLogo from '../../assets/images/bnb.png';
 import busdLogo from '../../assets/images/busd.png';
@@ -90,6 +97,7 @@ export const Donation = ({ charity, onDonate = identity }) => {
 
 	const busdApproval = useApproval('BUSD');
 	const donation = useDonation(charity);
+	const donations = useDonations({ address: charity.recipient });
 
 	const notifications = useNotifications();
 
@@ -232,29 +240,35 @@ export const Donation = ({ charity, onDonate = identity }) => {
 
 						{wallet.address ? (
 							<Box className={classes.buttonsContainer}>
-								{!busdApproval.loading && !busdApproval.approved && (
-									<Tooltip
-										label="Permitir doações utilizando BUSD"
-										position="bottom"
-										withArrow
-									>
-										<Button
-											fullWidth
-											size="md"
-											onClick={onBusdApprove}
-											loading={busdApproval.approving}
-											disabled={loading}
+								{!busdApproval.loading &&
+									!busdApproval.approved &&
+									form.values.token === 'BUSD' && (
+										<Tooltip
+											label="Permitir doações utilizando BUSD"
+											position="bottom"
+											withArrow
 										>
-											Permitir
-										</Button>
-									</Tooltip>
-								)}
+											<Button
+												fullWidth
+												size="md"
+												onClick={onBusdApprove}
+												loading={busdApproval.approving}
+												disabled={loading}
+											>
+												Permitir
+											</Button>
+										</Tooltip>
+									)}
+
 								<Button
 									fullWidth
 									type="submit"
 									size="md"
 									loading={donation.donating}
-									disabled={loading || !busdApproval.approved}
+									disabled={
+										loading ||
+										(!busdApproval.approved && form.values.token === 'BUSD')
+									}
 								>
 									Doar
 								</Button>
@@ -275,54 +289,105 @@ export const Donation = ({ charity, onDonate = identity }) => {
 			<Col span={12}>
 				<Card shadow="md" padding="lg">
 					<Title order={5} mb="sm">
-						Lastest donations
+						Últimas doações
 					</Title>
 
 					<Grid gutter="sm" className={classes.transactionsHeader}>
-						<Col span={5}>
-							<Text size="sm" weight="600" color="gray">
-								Wallet
+						<Col span={4}>
+							<Text size="sm" weight="600">
+								Data
 							</Text>
 						</Col>
 
-						<Col span={3}>
-							<Text size="sm" weight="600" color="gray">
-								Date
+						<Col span={4}>
+							<Text size="sm" weight="600">
+								Carteira
 							</Text>
 						</Col>
-						<Col span={2}>
-							<Text size="sm" weight="600" color="gray">
-								Amount
+
+						<Col span={4}>
+							<Text size="sm" weight="600">
+								Valor
 							</Text>
 						</Col>
-						<Col span={2} />
 					</Grid>
 
 					<Box mt={6}>
-						<Grid gutter="sm" className={classes.transactionsList}>
-							<Col span={5}>
-								<Text size="sm">0xe2d3A739EFFCd3</Text>
-							</Col>
+						{donations.loading && (
+							<>
+								<Grid gutter="sm" className={classes.transactionsList}>
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
 
-							<Col span={3}>
-								<Text size="sm">11/09/2021 21: 27</Text>
-							</Col>
-							<Col span={2}>
-								<Text size="sm">50 BUSD</Text>
-							</Col>
-							<Col span={2}>
-								<Anchor
-									size="sm"
-									href="http://amazonfrontlines.org"
-									target="_blank"
-									sx={{
-										'&:hover': { textDecoration: 'none' },
-									}}
-								>
-									View transaction
-								</Anchor>
-							</Col>
-						</Grid>
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+								</Grid>
+
+								<Grid gutter="sm" className={classes.transactionsList}>
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+								</Grid>
+
+								<Grid gutter="sm" className={classes.transactionsList}>
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+
+									<Col span={4}>
+										<Skeleton height={22} radius="sm" />
+									</Col>
+								</Grid>
+							</>
+						)}
+
+						{!donations.loading && donations.history.length === 0 ? (
+							<Grid gutter="sm" className={classes.transactionsList}>
+								<Col span={12}>
+									<Text color="dimmed" size="sm">
+										Nenhuma doação recebida
+									</Text>
+								</Col>
+							</Grid>
+						) : (
+							donations.history.map(({ from, amount, token, date }, i) => (
+								<Grid gutter="sm" className={classes.transactionsList} key={i}>
+									<Col span={4}>
+										<Text size="sm">
+											{formatDateTime(date, { date: 'short', time: 'short' })}
+										</Text>
+									</Col>
+
+									<Col span={4}>
+										<Text size="sm">{shortenAddress(from)}</Text>
+									</Col>
+
+									<Col span={4}>
+										<Text size="sm">
+											{amount.toString()} {token || 'BNB'}
+										</Text>
+									</Col>
+								</Grid>
+							))
+						)}
 					</Box>
 				</Card>
 			</Col>
