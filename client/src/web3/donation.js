@@ -2,15 +2,26 @@ import { useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 import BigNumber from 'bignumber.js';
 
-import { identity } from 'ramda';
+import {
+	descend,
+	filter,
+	fromPairs,
+	identity,
+	pipe,
+	prop,
+	map,
+	uniq,
+	sort,
+	take,
+} from 'ramda';
 
-import { tokens } from './utils';
+import { TOKENS } from './utils';
 
 import { Web3Context } from './context';
 
 import BEP20 from './contracts/IBEP20.json';
 
-const maxApproveAmount = BigNumber(2).pow(256).minus(1);
+const MAX_APPROVE_AMOUNT = BigNumber(2).pow(256).minus(1);
 
 export const useApproval = token => {
 	const { web3, account, contract } = useContext(Web3Context);
@@ -20,7 +31,7 @@ export const useApproval = token => {
 	const [loading, setLoading] = useState(false);
 
 	const tokenContract = useMemo(
-		() => new web3.eth.Contract(BEP20.abi, tokens[token].address),
+		() => new web3.eth.Contract(BEP20.abi, TOKENS[token].address),
 		[token]
 	);
 
@@ -29,7 +40,7 @@ export const useApproval = token => {
 			setApproving(true);
 
 			tokenContract.methods
-				.approve(contract.options.address, maxApproveAmount.toFixed())
+				.approve(contract.options.address, MAX_APPROVE_AMOUNT.toFixed())
 				.send({ from: account })
 				.on('transactionHash', transactionHash =>
 					onPending({ transactionHash })
@@ -82,7 +93,7 @@ export const useDonation = charity => {
 
 			const transaction = token
 				? contract.methods
-						.donateToken(charity.recipient, tokens[token].address, weiAmount)
+						.donateToken(charity.recipient, TOKENS[token].address, weiAmount)
 						.send({ from: account })
 				: contract.methods
 						.donate(charity.recipient)
@@ -105,4 +116,74 @@ export const useDonation = charity => {
 	);
 
 	return { donate, donating };
+};
+
+const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+export const useDonations = ({ address }) => {
+	const { web3, contract } = useContext(Web3Context);
+
+	const [history, setHistory] = useState([]);
+	const [loading, setLoading] = useState(false);
+
+	useEffect(async () => {
+		if (address) {
+			setLoading(true);
+			const donations = await contract.methods
+				.addressDonations(address)
+				.call()
+				.then(pipe(sort(descend(prop('timestamp'))), take(10)));
+
+			const tokens = fromPairs(
+				await Promise.all(
+					pipe(
+						map(prop('token')),
+						filter(tokenAddress => tokenAddress !== EMPTY_ADDRESS),
+						uniq,
+						map(async tokenAddress =>
+							new web3.eth.Contract(BEP20.abi, tokenAddress).methods
+								.symbol()
+								.call()
+								.then(symbol => [tokenAddress, symbol])
+						)
+					)(donations)
+				)
+			);
+
+			const charities = fromPairs(
+				await Promise.all(
+					pipe(
+						map(prop('recipient')),
+						uniq,
+						map(async recipient =>
+							contract.methods
+								.charities(recipient)
+								.call()
+								.then(charity => ({
+									...charity,
+									recipient,
+								}))
+								.then(charity => [recipient, charity])
+						)
+					)(donations)
+				)
+			);
+
+			setHistory(
+				donations.map(({ from, token, timestamp, amount, recipient }) => ({
+					from,
+					charity: charities[recipient],
+					amount: BigNumber(web3.utils.fromWei(amount)),
+					token: tokens[token] || null,
+					date: new Date(timestamp * 1000),
+				}))
+			);
+
+			setLoading(false);
+		} else {
+			setHistory([]);
+		}
+	}, [contract, setLoading, setHistory, address]);
+
+	return { history, loading };
 };

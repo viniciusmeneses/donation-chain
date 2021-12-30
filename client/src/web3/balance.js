@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 
 import { Web3Context } from './context';
 
-import { tokens } from './utils';
+import { TOKENS } from './utils';
 
 import BEP20 from './contracts/IBEP20.json';
 
@@ -26,7 +26,7 @@ export const useBalance = token => {
 			if (token) {
 				const tokenContract = new web3.eth.Contract(
 					BEP20.abi,
-					tokens[token].address
+					TOKENS[token].address
 				);
 				setBalance(await tokenContract.methods.balanceOf(account).call());
 			} else {

@@ -4,15 +4,15 @@ import Web3 from 'web3';
 
 import { useLocalStorageValue } from '@mantine/hooks';
 
-import DonationChain from './contracts/DonationChain.json';
+import DONATIONCHAIN from './contracts/DonationChain.json';
 
-import { network, addOrSwitchNetwork } from './utils';
+import { NETWORK, addOrSwitchNetwork } from './utils';
 
-const web3 = new Web3(network.rpcUrls[0]);
+const web3 = new Web3(NETWORK.rpcUrls[0]);
 
 const contract = new web3.eth.Contract(
-	DonationChain.abi,
-	DonationChain.networks[web3.utils.hexToNumber(network.chainId)].address
+	DONATIONCHAIN.abi,
+	DONATIONCHAIN.networks[web3.utils.hexToNumber(NETWORK.chainId)].address
 );
 
 export const Web3Context = createContext({});
@@ -33,9 +33,9 @@ export const Web3Provider = props => {
 		if (ethereum) {
 			ethereum.on('accountsChanged', ([account]) => setAccount(account));
 			ethereum.on('chainChanged', chainId => {
-				if (chainId !== network.chainId) {
+				if (chainId !== NETWORK.chainId) {
 					setAccount(null);
-					web3.setProvider(network.rpcUrls[0]);
+					web3.setProvider(NETWORK.rpcUrls[0]);
 				}
 			});
 

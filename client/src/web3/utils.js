@@ -1,22 +1,22 @@
-import networks from './config/networks.json';
+import NETWORKS from './config/networks.json';
 
-import tokensByNetwork from './config/tokens.json';
+import TOKENS_BY_NETWORK from './config/tokens.json';
 
-export const network = networks[process.env.REACT_APP_NETWORK];
+export const NETWORK = NETWORKS[process.env.REACT_APP_NETWORK];
 
-export const tokens = tokensByNetwork[process.env.REACT_APP_NETWORK];
+export const TOKENS = TOKENS_BY_NETWORK[process.env.REACT_APP_NETWORK];
 
 export const addOrSwitchNetwork = async () => {
 	try {
 		await window.ethereum.request({
 			method: 'wallet_switchEthereumChain',
-			params: [{ chainId: network.chainId }],
+			params: [{ chainId: NETWORK.chainId }],
 		});
 	} catch (e) {
 		if (e.code === 4902) {
 			await window.ethereum.request({
 				method: 'wallet_addEthereumChain',
-				params: [network],
+				params: [NETWORK],
 			});
 		} else {
 			throw e;

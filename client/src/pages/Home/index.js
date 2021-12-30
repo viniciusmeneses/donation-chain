@@ -17,7 +17,7 @@ import useModalState, { bindModal, bindTrigger } from '../../hooks/modalState';
 
 import useQueryString from '../../hooks/queryString';
 
-import { causes as causeList } from '../../utils';
+import { CAUSES } from '../../utils';
 
 import { useCharities } from '../../web3';
 
@@ -76,7 +76,7 @@ export const HomePage = () => {
 			allCharities.filter(
 				({ cause }) =>
 					params.cause == null ||
-					params.cause === causeList[cause].label.toLowerCase()
+					params.cause === CAUSES[cause].label.toLowerCase()
 			),
 		[allCharities, params.cause]
 	);

@@ -12,12 +12,10 @@ import {
 	createStyles,
 } from '@mantine/core';
 
-import { CauseIcon } from '../CauseIcon';
-
-import { causes } from '../../utils';
+import { CAUSES } from '../../utils';
 import useQueryString from '../../hooks/queryString';
 
-const useStyles = createStyles((theme, { color, active = false }) => ({
+const useCauseStyles = createStyles((theme, { color, active = false }) => ({
 	cause: {
 		borderRadius: '4px',
 		textDecoration: 'none',
@@ -30,10 +28,10 @@ const useStyles = createStyles((theme, { color, active = false }) => ({
 	},
 }));
 
-const Cause = ({ color, label, ...props }) => {
+const Cause = ({ color, label, Icon, ...props }) => {
 	const [params, setParams] = useQueryString();
 
-	const { classes } = useStyles({
+	const { classes } = useCauseStyles({
 		active: params.cause === label.toLowerCase(),
 		color,
 	});
@@ -46,7 +44,7 @@ const Cause = ({ color, label, ...props }) => {
 		>
 			<Group spacing="xs">
 				<Avatar size={28} color={color}>
-					<CauseIcon label={label} size={18} />
+					<Icon size={18} />
 				</Avatar>
 
 				<Text weight={600} size="sm" className={classes.causeName}>
@@ -57,19 +55,21 @@ const Cause = ({ color, label, ...props }) => {
 	);
 };
 
+const useStyles = createStyles({
+	header: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
+});
+
 export const Sidebar = ({ loading, causes: causeIds = [] }) => {
+	const { classes } = useStyles();
 	const [params, setParams] = useQueryString();
 
 	return (
 		<Card shadow="sm">
-			<Box
-				mb="4px"
-				sx={{
-					display: 'flex',
-					justifyContent: 'space-between',
-					alignItems: 'center',
-				}}
-			>
+			<Box mb="4px" className={classes.header}>
 				<Text
 					weight={500}
 					mt={0}
@@ -115,7 +115,7 @@ export const Sidebar = ({ loading, causes: causeIds = [] }) => {
 						<Skeleton height={28} radius="sm" />
 					</>
 				) : (
-					causeIds.sort().map(cause => <Cause key={cause} {...causes[cause]} />)
+					causeIds.sort().map(cause => <Cause key={cause} {...CAUSES[cause]} />)
 				)}
 			</SimpleGrid>
 		</Card>

@@ -4,7 +4,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 
 import { useNotifications as useMtnNotifications } from '@mantine/notifications';
 
-const defaultProps = {
+const DEFAULT_PROPS = {
 	ERROR: {
 		disallowClose: true,
 		color: 'red',
@@ -29,13 +29,13 @@ const useNotifications = () => {
 
 	const show = useCallback(
 		({ type, ...props }) =>
-			showNotification({ ...defaultProps[type], ...props }),
+			showNotification({ ...DEFAULT_PROPS[type], ...props }),
 		[showNotification]
 	);
 
 	const update = useCallback(
 		(id, { type, ...props }) =>
-			updateNotification(id, { ...defaultProps[type], ...props }),
+			updateNotification(id, { ...DEFAULT_PROPS[type], ...props }),
 		[updateNotification]
 	);
 

@@ -15,9 +15,7 @@ import {
 
 import { identity } from 'ramda';
 
-import { CauseIcon } from '../CauseIcon';
-
-import { causes, removeHttpFromUrl } from '../../utils';
+import { CAUSES, removeHttpFromUrl } from '../../utils';
 
 const useStyles = createStyles(theme => ({
 	container: {
@@ -49,12 +47,13 @@ export const CharityCard = ({
 	...props
 }) => {
 	const { classes } = useStyles();
+	const { Icon: CauseIcon } = CAUSES[cause];
 
 	return (
 		<Card shadow="sm" padding="lg" className={classes.container} {...props}>
 			<Card.Section>
 				<Image
-					src={`https://source.unsplash.com/featured/300x150/?${causes[cause].label}`}
+					src={`https://source.unsplash.com/featured/300x150/?${CAUSES[cause].name}`}
 					height={150}
 					alt="Charity Image"
 				/>
@@ -73,9 +72,9 @@ export const CharityCard = ({
 					</Anchor>
 				</Box>
 
-				<Tooltip label={causes[cause].label} withArrow>
-					<Avatar color={causes[cause].color} radius="xl">
-						<CauseIcon label={causes[cause].label} />
+				<Tooltip label={CAUSES[cause].label} withArrow>
+					<Avatar color={CAUSES[cause].color} radius="xl">
+						<CauseIcon />
 					</Avatar>
 				</Tooltip>
 			</Group>
