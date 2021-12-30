@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.4 <0.9.0;
+pragma solidity >=0.8.7 <0.9.0;
 
 interface IBEP20 {
     function totalSupply() external view returns (uint256);
@@ -35,15 +35,22 @@ contract DonationChain {
     Cause cause;
     string website;
     address[] acceptedTokens;
-    uint donationCount;
+    uint256 donationCount;
+  }
+
+  struct Donation {
+    address from;
+    address recipient;
+    uint256 amount;
+    address token;
+    uint256 timestamp;
   }
 
   address public owner;
 
+  address[] public recipients;
   mapping(address => Charity) public charities;
-  address[] private recipients;
-
-  event Donation(address from, address recipient, uint256 amount, address token);
+  mapping(address => Donation[]) private donations;
 
   modifier existCharity(address addr) {
     require(bytes(charities[addr].name).length > 0, "Charity not exists");
@@ -51,7 +58,12 @@ contract DonationChain {
   }
 
   modifier notExistCharity(address addr) {
-    require(bytes(charities[msg.sender].name).length == 0, "Charity already exists");
+    require(bytes(charities[addr].name).length == 0, "Charity already exists");
+    _;
+  }
+
+  modifier senderNotRecipient() {
+    require(bytes(charities[msg.sender].name).length == 0, "Sender address is a charity recipient");
     _;
   }
 
@@ -68,7 +80,7 @@ contract DonationChain {
     _;
   }
 
-  constructor() public {
+  constructor() {
     owner = msg.sender;
   }
 
@@ -111,7 +123,7 @@ contract DonationChain {
     delete charities[recipient];
     bool deleted = false;
 
-    for (uint i = 0; i < recipients.length; i++) {
+    for (uint256 i = 0; i < recipients.length; i++) {
       if (recipients[i] == recipient) deleted = true;
       recipients[i] = recipients[i + (deleted ? 1 : 0)];
     }
@@ -123,18 +135,32 @@ contract DonationChain {
     return recipients;
   }
 
-  function donate(address payable recipient) public payable existCharity(recipient) {
-    recipient.transfer(msg.value);
-    charities[recipient].donationCount += 1;
-    emit Donation(msg.sender, recipient, msg.value, address(0));
+
+  function addressDonations(address addr) public view returns(Donation[] memory) {
+    return donations[addr];
   }
 
-  function donateToken(address recipient, address token, uint256 amount) public existCharity(recipient) {
+  function donate(address payable recipient) public payable existCharity(recipient) senderNotRecipient() {
+    recipient.transfer(msg.value);
+    charities[recipient].donationCount += 1;
+
+    Donation memory donation = Donation({
+      from: msg.sender,
+      recipient: recipient,
+      amount: msg.value,
+      token: address(0),
+      timestamp: block.timestamp
+    });
+    donations[msg.sender].push(donation);
+    donations[recipient].push(donation);
+  }
+
+  function donateToken(address recipient, address token, uint256 amount) public existCharity(recipient) senderNotRecipient() {
     Charity memory charity = charities[recipient];
     IBEP20 tokenContract = IBEP20(token);
     bool isTokenAccepted = false;
 
-    for (uint i = 0; i < charity.acceptedTokens.length; i++) {
+    for (uint256 i = 0; i < charity.acceptedTokens.length; i++) {
       if (charity.acceptedTokens[i] == token) {
         isTokenAccepted = true;
         break;
@@ -148,6 +174,15 @@ contract DonationChain {
 
     tokenContract.transferFrom(msg.sender, recipient, amount);
     charities[recipient].donationCount += 1;
-    emit Donation(msg.sender, recipient, amount, token);
+
+    Donation memory donation = Donation({
+      from: msg.sender,
+      recipient: recipient,
+      amount: amount,
+      token: token,
+      timestamp: block.timestamp
+    });
+    donations[msg.sender].push(donation);
+    donations[recipient].push(donation);
   }
 }
