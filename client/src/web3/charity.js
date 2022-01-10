@@ -10,7 +10,7 @@ export const useCharities = () => {
 	const [loading, setLoading] = useState(false);
 
 	const fetch = useCallback(async () => {
-		const addresses = await contract.methods.getRecipients().call();
+		const addresses = await contract.methods.allRecipients().call();
 		const charities = await Promise.all(
 			addresses.map(addr =>
 				contract.methods

@@ -48,7 +48,7 @@ contract DonationChain {
 
   address public owner;
 
-  address[] public recipients;
+  address[] private recipients;
   mapping(address => Charity) public charities;
   mapping(address => Donation[]) private donations;
 
@@ -131,7 +131,7 @@ contract DonationChain {
     recipients.pop();
   }
 
-  function getRecipients() public view returns(address[] memory) {
+  function allRecipients() public view returns(address[] memory) {
     return recipients;
   }
 
