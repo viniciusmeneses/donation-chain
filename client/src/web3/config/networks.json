@@ -3,7 +3,7 @@
     "chainId": "0x61",
     "chainName": "BSC Testnet",
     "rpcUrls": [
-      "https://data-seed-prebsc-1-s1.binance.org:8545/"
+      "https://data-seed-prebsc-1-s2.binance.org:8545/"
     ],
     "nativeCurrency": {
       "name": "Binance Coin",
@@ -26,7 +26,7 @@
       "decimals": 18
     },
     "blockExplorerUrls": [
-      "https://testnet.bscscan.com"
+      "https://bscscan.com"
     ]
   }
 }
