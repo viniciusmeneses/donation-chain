@@ -123,7 +123,7 @@ contract DonationChain {
     delete charities[recipient];
     bool deleted = false;
 
-    for (uint256 i = 0; i < recipients.length; i++) {
+    for (uint256 i = 0; i < recipients.length - 1; i++) {
       if (recipients[i] == recipient) deleted = true;
       recipients[i] = recipients[i + (deleted ? 1 : 0)];
     }
