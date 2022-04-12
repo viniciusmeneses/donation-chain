@@ -3,17 +3,16 @@
   <img src="https://github.com/viniciusmeneses/donation-chain/blob/master/dark-logo.png#gh-dark-mode-only" alt="Logo" />
 
   <br/>
+  <br/>
 
   <p align="center">
-    Decentralized application that allows cryptocurrency donations to charities built on the <strong>Binance Smart Chain</strong>
+    Decentralized application built on the <strong>Binance Smart Chain</strong> that allows cryptocurrency donations to charities
   </p>
 
   <p>
-    <strong>
-      <a href="http://donation-chain.surge.sh">View demo</a>
-      &nbsp;&nbsp;|&nbsp;&nbsp;
-      <a href="https://suap.ifsp.edu.br/media/private-media/tmp/900464ee-3d64-4ba2-b5fd-a6400e47d619.pdf?st=mhjT_O69s_H6Y6K0PZBKFA&e=1649721811">Read the paper</a>
-    </strong>
+    <a href="http://donation-chain.surge.sh">View demo</a>
+    &nbsp;|&nbsp;
+    <a href="https://suap.ifsp.edu.br/media/private-media/tmp/900464ee-3d64-4ba2-b5fd-a6400e47d619.pdf?st=mhjT_O69s_H6Y6K0PZBKFA&e=1649721811">Read the paper</a>
   </p>
 </div>
 
