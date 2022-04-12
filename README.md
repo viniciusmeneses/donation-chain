@@ -12,7 +12,7 @@
   <p>
     <a href="http://donation-chain.surge.sh">View demo</a>
     &nbsp;|&nbsp;
-    <a href="https://suap.ifsp.edu.br/media/private-media/tmp/900464ee-3d64-4ba2-b5fd-a6400e47d619.pdf?st=mhjT_O69s_H6Y6K0PZBKFA&e=1649721811">Read the paper</a>
+    <a href="https://github.com/viniciusmeneses/donation-chain/blob/master/paper.pdf">Read the paper</a>
   </p>
 </div>
 
@@ -20,7 +20,7 @@
 
 ![Product Name Screen Shot](./preview.gif)
 
-DonationChain is a web application developed by me as final project of System Analisys and Development graduation. Every concept and technology used in the development of this project, as long the process of developing a dapp, was explained on my [undergraduate thesis](https://suap.ifsp.edu.br/media/private-media/tmp/900464ee-3d64-4ba2-b5fd-a6400e47d619.pdf?st=mhjT_O69s_H6Y6K0PZBKFA&e=1649721811).
+DonationChain is a web application developed by me as final project of System Analisys and Development graduation. Every concept and technology used in the development of this project, as long the process of developing a dapp, was explained on my [undergraduate thesis](https://github.com/viniciusmeneses/donation-chain/blob/master/paper.pdf).
 
 This project aims to help charities struggling with financial challenges caused by the outcomes of the COVID-19 pandemic, allowing cryptocurrency donations to these charities.
 
