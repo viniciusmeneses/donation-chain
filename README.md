@@ -1,8 +1,6 @@
 <div align="center">
-  <a href="https://github.com/viniciusmeneses/donation-chain">
-    <img src="./light-logo.png#gh-light-mode-only" alt="Logo">
-    <img src="./dark-logo.png#gh-dark-mode-only" alt="Logo">
-  </a>
+  <img src="https://github.com/viniciusmeneses/donation-chain/blob/master/light-logo.png#gh-light-mode-only" alt="Logo" />
+  <img src="https://github.com/viniciusmeneses/donation-chain/blob/master/dark-logo.png#gh-dark-mode-only" alt="Logo" />
 
   <br/>
 
@@ -11,9 +9,11 @@
   </p>
 
   <p>
-    <a href="#">View demo</a>
-    &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="https://suap.ifsp.edu.br/media/private-media/tmp/900464ee-3d64-4ba2-b5fd-a6400e47d619.pdf?st=mhjT_O69s_H6Y6K0PZBKFA&e=1649721811">Read the paper</a>
+    <strong>
+      <a href="http://donation-chain.surge.sh">View demo</a>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <a href="https://suap.ifsp.edu.br/media/private-media/tmp/900464ee-3d64-4ba2-b5fd-a6400e47d619.pdf?st=mhjT_O69s_H6Y6K0PZBKFA&e=1649721811">Read the paper</a>
+    </strong>
   </p>
 </div>
 
